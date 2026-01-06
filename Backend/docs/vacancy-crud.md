@@ -239,7 +239,7 @@ curl -X GET http://localhost:3000/api/vacancies/507f1f77bcf86cd799439011 \
 
 ### 3. Create Vacancy
 
-Yangi vakansiya yaratish.
+Yangi vakansiya yaratish. Vakansiya yaratilganda, agar sorovnoma ma'lumotlari yuborilsa, sorovnoma ham avtomatik yaratiladi.
 
 **Endpoint:** `POST /api/vacancies`
 
@@ -261,7 +261,32 @@ Yangi vakansiya yaratish.
   "responsibilities": "Develop and maintain web applications, collaborate with team members, write clean code.",
   "preferences": "Experience with Node.js and React, good communication skills.",
   "skills": ["Node.js", "React", "MongoDB", "Express"],
-  "status": "active"
+  "status": "active",
+  "formNom": "Dasturchi uchun sorovnoma",
+  "formQuestions": [
+    {
+      "question": "Ismingiz nima?",
+      "type": "text",
+      "required": true,
+      "placeholder": "Ismingizni kiriting",
+      "order": 1
+    },
+    {
+      "question": "Qaysi shaharda yashaysiz?",
+      "type": "select",
+      "required": true,
+      "options": ["Toshkent", "Samarqand", "Buxoro", "Andijon"],
+      "order": 2
+    },
+    {
+      "question": "Telefon raqamingiz?",
+      "type": "phone",
+      "required": true,
+      "placeholder": "+998901234567",
+      "order": 3
+    }
+  ],
+  "formStatus": "active"
 }
 ```
 
@@ -381,6 +406,47 @@ curl -X POST http://localhost:3000/api/vacancies \
   }'
 ```
 
+**Example cURL with Application Form:**
+```bash
+curl -X POST http://localhost:3000/api/vacancies \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "company": "507f1f77bcf86cd799439012",
+    "title": "Senior Full Stack Developer",
+    "department": "IT",
+    "position": "Senior Developer",
+    "experience": "3+ years",
+    "workType": "fulltime",
+    "minAge": 25,
+    "maxAge": 45,
+    "salary": "5000000",
+    "description": "We are looking for an experienced full stack developer.",
+    "responsibilities": "Develop and maintain web applications.",
+    "preferences": "Experience with Node.js and React.",
+    "skills": ["Node.js", "React", "MongoDB"],
+    "status": "active",
+    "formNom": "Dasturchi uchun sorovnoma",
+    "formQuestions": [
+      {
+        "question": "Ismingiz nima?",
+        "type": "text",
+        "required": true,
+        "placeholder": "Ismingizni kiriting",
+        "order": 1
+      },
+      {
+        "question": "Qaysi shaharda yashaysiz?",
+        "type": "select",
+        "required": true,
+        "options": ["Toshkent", "Samarqand", "Buxoro"],
+        "order": 2
+      }
+    ],
+    "formStatus": "active"
+  }'
+```
+
 **Example JavaScript (fetch):**
 ```javascript
 const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
@@ -405,13 +471,34 @@ const response = await fetch('http://localhost:3000/api/vacancies', {
     responsibilities: 'Develop and maintain web applications.',
     preferences: 'Experience with Node.js and React.',
     skills: ['Node.js', 'React', 'MongoDB'],
-    status: 'active'
+    status: 'active',
+    // Optional: Create application form along with vacancy
+    formNom: 'Dasturchi uchun sorovnoma',
+    formQuestions: [
+      {
+        question: 'Ismingiz nima?',
+        type: 'text',
+        required: true,
+        placeholder: 'Ismingizni kiriting',
+        order: 1
+      },
+      {
+        question: 'Qaysi shaharda yashaysiz?',
+        type: 'select',
+        required: true,
+        options: ['Toshkent', 'Samarqand', 'Buxoro'],
+        order: 2
+      }
+    ],
+    formStatus: 'active'
   })
 });
 
 const data = await response.json();
 console.log(data);
 ```
+
+**Note:** Sorovnoma yaratish ixtiyoriy. Agar `formNom` va `formQuestions` yuborilmasa, faqat vakansiya yaratiladi. Sorovnoma ma'lumotlari haqida batafsil: [Application Form API Documentation](./application-form-api.md)
 
 ---
 
@@ -829,4 +916,20 @@ Har bir vakansiya bitta kompaniyaga tegishli. Company ma'lumotlari populate qili
 
 - Get All Vacancies: Company nomi va INN ko'rsatiladi
 - Get Single Vacancy: Company to'liq ma'lumotlari ko'rsatiladi (nom, INN, egasi ism-familiyasi, telefon)
+
+---
+
+## Application Form Integration
+
+Vakansiya yaratilganda, sorovnoma (application form) ham yaratish mumkin. Buning uchun request bodyga quyidagi maydonlar qo'shiladi:
+
+- `formNom` - Sorovnoma nomi
+- `formQuestions` - Sorovnoma savollari array
+- `formStatus` - Sorovnoma statusi (optional, default: "active")
+
+**Important Notes:**
+- Sorovnoma yaratish ixtiyoriy - agar `formNom` va `formQuestions` yuborilmasa, faqat vakansiya yaratiladi
+- Agar sorovnoma yaratishda xatolik bo'lsa, vakansiya ham o'chiriladi va xatolik qaytariladi
+- Har bir vakansiya uchun faqat bitta sorovnoma bo'lishi mumkin
+- Sorovnoma ma'lumotlari haqida batafsil: [Application Form API Documentation](./application-form-api.md)
 

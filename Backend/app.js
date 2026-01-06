@@ -5,20 +5,32 @@ require('dotenv').config();
 // Import routes
 const adminRoutes = require('./routes/adminRoutes');
 const adminApplicationRoutes = require('./routes/adminApplicationRoutes');
+const adminMaterialRoutes = require('./routes/adminMaterialRoutes');
 const companyRoutes = require('./routes/companyRoutes');
 const vacancyRoutes = require('./routes/vacancyRoutes');
 const candidateRoutes = require('./routes/candidateRoutes');
 const webVacancyRoutes = require('./routes/webVacancyRoutes');
 const webApplicationRoutes = require('./routes/webApplicationRoutes');
+const webMaterialRoutes = require('./routes/webMaterialRoutes');
+const webSavedVacancyRoutes = require('./routes/webSavedVacancyRoutes');
 const webAppRoutes = require('./routes/webAppRoutes');
+const webTestResultRoutes = require('./routes/webTestResultRoutes');
+const adminTestResultRoutes = require('./routes/adminTestResultRoutes');
+const adminInterviewRoutes = require('./routes/adminInterviewRoutes');
+const webInterviewRoutes = require('./routes/webInterviewRoutes');
+const adminCertificateRoutes = require('./routes/adminCertificateRoutes');
+const certificateRoutes = require('./routes/certificateRoutes');
 
 // Initialize express app
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' })); // Increase limit for base64 images
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Serve static files from public directory
+app.use(express.static('public'));
 
 // Health check route
 app.get('/health', (req, res) => {
@@ -32,12 +44,21 @@ app.get('/health', (req, res) => {
 // API Routes
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin/applications', adminApplicationRoutes);
+app.use('/api/admin/materials', adminMaterialRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/vacancies', vacancyRoutes);
 app.use('/api/candidates', candidateRoutes);
 app.use('/api/web/vacancies', webVacancyRoutes);
 app.use('/api/web/applications', webApplicationRoutes);
+app.use('/api/web/materials', webMaterialRoutes);
+app.use('/api/web/saved-vacancies', webSavedVacancyRoutes);
 app.use('/api/web-app', webAppRoutes);
+app.use('/api/web/test-results', webTestResultRoutes);
+app.use('/api/admin/test-results', adminTestResultRoutes);
+app.use('/api/admin/interviews', adminInterviewRoutes);
+app.use('/api/web/interviews', webInterviewRoutes);
+app.use('/api/admin/certificates', adminCertificateRoutes);
+app.use('/api/certificates', certificateRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {

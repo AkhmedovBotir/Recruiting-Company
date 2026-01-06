@@ -6,6 +6,7 @@ const crypto = require('crypto');
  * @param {string} botToken - Telegram bot token
  * @returns {Object|null} - Parsed user data or null if invalid
  */
+
 const validateTelegramWebApp = (initData, botToken) => {
   try {
     // Parse initData

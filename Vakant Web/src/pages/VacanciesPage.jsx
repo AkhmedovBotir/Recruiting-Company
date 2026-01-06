@@ -65,15 +65,15 @@ const VacanciesPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
             <div className="bg-white border-b border-gray-200">
-                <div className="container mx-auto px-4 py-6">
-                    <h1 className="text-3xl font-bold text-gray-900">
+                <div className="container mx-auto px-4 py-4 md:py-6 max-w-7xl">
+                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
                         Vakansiyalar
                     </h1>
                 </div>
             </div>
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-8 md:py-10 lg:py-12 max-w-7xl">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}

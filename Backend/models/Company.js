@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const companySchema = new mongoose.Schema(
-  {
+  { 
     name: {
       type: String,
       required: [true, 'Company name is required'],
@@ -41,10 +41,10 @@ const companySchema = new mongoose.Schema(
       default: 'active',
     },
   },
-  {
+  { 
     timestamps: true,
-  }
-);
+  } 
+);  
 
 // Index for faster queries
 // companySchema.index({ inn: 1 });

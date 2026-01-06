@@ -6,12 +6,14 @@
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ViewVacancyModal = ({ isOpen, onClose, vacancy }) => {
+
   const stripHtml = (html) => {
     if (!html) return '';
     const tmp = document.createElement('DIV');
     tmp.innerHTML = html;
     return tmp.textContent || tmp.innerText || '';
   };
+
 
   if (!isOpen || !vacancy) return null;
 

@@ -7,6 +7,7 @@ import VacancyCard from '../components/VacancyCard';
 import Loading from '../components/Loading';
 import Alert from '../components/Alert';
 import { WORK_TYPES } from '../utils/constants';
+import { SearchIcon, LightningIcon, ChartIcon } from '../components/Icons';
 
 const HomePage = () => {
   const { isAuthenticated } = useAuth();
@@ -34,7 +35,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">
@@ -63,7 +64,7 @@ const HomePage = () => {
       </div>
 
       {/* Vacancies Section */}
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20 max-w-7xl">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-gray-900">
             So'nggi vakansiyalar
@@ -106,9 +107,16 @@ const HomePage = () => {
         )}
 
         {/* Features Section */}
-        <div className="mt-16 grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-md hover:shadow-xl transition-all duration-200">
-            <div className="text-4xl mb-4">🔍</div>
+        <div className="mt-16 grid md:grid-cols-3 gap-6 lg:gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white p-6 rounded-lg border border-gray-200 shadow-md hover:shadow-xl transition-all duration-200"
+          >
+            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+              <SearchIcon className="w-6 h-6 text-blue-600" />
+            </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Qulay qidiruv
             </h3>
@@ -116,27 +124,41 @@ const HomePage = () => {
               Turli xil filtrlardan foydalanib, o'zingizga mos vakansiyalarni
               toping
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-md hover:shadow-xl transition-all duration-200">
-            <div className="text-4xl mb-4">⚡</div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white p-6 rounded-lg border border-gray-200 shadow-md hover:shadow-xl transition-all duration-200"
+          >
+            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+              <LightningIcon className="w-6 h-6 text-yellow-600" />
+            </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Tezkor ariza
             </h3>
             <p className="text-gray-600">
               Bir necha bosqichda osonlik bilan vakansiyaga ariza topshiring
             </p>
-          </div>
+          </motion.div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-md hover:shadow-xl transition-all duration-200">
-            <div className="text-4xl mb-4">📊</div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white p-6 rounded-lg border border-gray-200 shadow-md hover:shadow-xl transition-all duration-200"
+          >
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+              <ChartIcon className="w-6 h-6 text-green-600" />
+            </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">
               Jarayonni kuzatish
             </h3>
             <p className="text-gray-600">
               Barcha arizalaringizning holatini real vaqtda kuzating
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

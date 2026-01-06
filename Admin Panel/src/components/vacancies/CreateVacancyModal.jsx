@@ -25,6 +25,7 @@ const CreateVacancyModal = ({ isOpen, onClose, onCreate, selectedCompanyId }) =>
     status: 'active',
   });
 
+
   const [skillsInput, setSkillsInput] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -187,6 +188,7 @@ const CreateVacancyModal = ({ isOpen, onClose, onCreate, selectedCompanyId }) =>
     }));
   };
 
+
   /**
    * Handle form submission
    */
@@ -205,6 +207,7 @@ const CreateVacancyModal = ({ isOpen, onClose, onCreate, selectedCompanyId }) =>
         maxAge: Number(formData.maxAge),
         salary: formData.salary.trim(),
       };
+
       await onCreate(submitData);
       handleClose();
     } catch (error) {

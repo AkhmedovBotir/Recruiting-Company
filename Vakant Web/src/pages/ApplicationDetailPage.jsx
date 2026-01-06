@@ -8,11 +8,17 @@ import Alert from '../components/Alert';
 import {
   formatCurrency,
   formatDate,
+  isURL,
+  formatURL,
 } from '../utils/helpers';
 import {
   STATUS_COLORS,
   STATUS_LABELS,
   WORK_TYPES,
+  INTERVIEW_STATUS_COLORS,
+  INTERVIEW_STATUS_LABELS,
+  INTERVIEW_RESULT_COLORS,
+  INTERVIEW_RESULT_LABELS,
 } from '../utils/constants';
 
 const ApplicationDetailPage = () => {
@@ -20,6 +26,8 @@ const ApplicationDetailPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [application, setApplication] = useState(null);
+  const [interview, setInterview] = useState(null);
+  const [loadingInterview, setLoadingInterview] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -37,12 +45,35 @@ const ApplicationDetailPage = () => {
     try {
       const response = await api.getApplication(id);
       if (response.success) {
-        setApplication(response.data.application);
+        const app = response.data.application;
+        setApplication(app);
+        
+        // If application has interview status or interviewId, fetch interview
+        if (app.status === 'interview' || app.interviewId || app.interview) {
+          const interviewId = app.interviewId || app.interview?._id || app.interview;
+          if (interviewId) {
+            fetchInterview(interviewId);
+          }
+        }
       }
     } catch (err) {
       setError(err.message || 'Ariza ma\'lumotlarini yuklashda xatolik');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInterview = async (interviewId) => {
+    setLoadingInterview(true);
+    try {
+      const response = await api.getInterview(interviewId);
+      if (response.success) {
+        setInterview(response.data.interview);
+      }
+    } catch (err) {
+      console.error('Interview ma\'lumotlarini yuklashda xatolik:', err);
+    } finally {
+      setLoadingInterview(false);
     }
   };
 
@@ -52,7 +83,7 @@ const ApplicationDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
         <div className="container mx-auto px-4 py-8">
           <Loading />
         </div>
@@ -62,7 +93,7 @@ const ApplicationDetailPage = () => {
 
   if (error && !application) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
         <div className="container mx-auto px-4 py-8">
           <Alert message={error} type="error" />
           <Link
@@ -85,8 +116,8 @@ const ApplicationDetailPage = () => {
     STATUS_COLORS[application.status] || STATUS_COLORS.pending;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
+      <div className="container mx-auto px-4 py-8 md:py-10 lg:py-12 max-w-7xl">
         <Link
           to="/applications"
           className="text-blue-500 hover:text-blue-600 mb-4 inline-block"
@@ -123,6 +154,85 @@ const ApplicationDetailPage = () => {
                 Eslatma
               </p>
               <p className="text-gray-700">{application.notes}</p>
+            </div>
+          )}
+
+          {/* Interview Information */}
+          {(application.status === 'interview' || interview) && (
+            <div className="mb-6 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-800">
+                  Suhbat ma'lumotlari
+                </h3>
+                {loadingInterview && (
+                  <span className="text-sm text-gray-500">Yuklanmoqda...</span>
+                )}
+              </div>
+              {interview ? (
+                <div className="space-y-3">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Suhbat o'tkazuvchi</p>
+                      <p className="font-semibold text-gray-900">{interview.interviewer}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600 mb-1">Sana va vaqt</p>
+                      <p className="font-semibold text-gray-900">
+                        {formatDate(interview.date)} {interview.time}
+                      </p>
+                    </div>
+                    <div className="md:col-span-2">
+                      <p className="text-sm text-gray-600 mb-1">Joylashuv</p>
+                      {isURL(interview.location) ? (
+                        <a
+                          href={formatURL(interview.location)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-blue-600 hover:text-blue-700 hover:underline break-all"
+                        >
+                          {interview.location}
+                        </a>
+                      ) : (
+                        <p className="font-semibold text-gray-900">{interview.location}</p>
+                      )}
+                    </div>
+                    {interview.content && (
+                      <div className="md:col-span-2">
+                        <p className="text-sm text-gray-600 mb-1">Mazmun</p>
+                        <p className="text-gray-700">{interview.content}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2 mt-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        INTERVIEW_STATUS_COLORS[interview.status] || 'bg-gray-100 text-gray-800'
+                      }`}
+                    >
+                      {INTERVIEW_STATUS_LABELS[interview.status] || interview.status}
+                    </span>
+                    {interview.result && (
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          INTERVIEW_RESULT_COLORS[interview.result] || 'bg-gray-100 text-gray-800'
+                        }`}
+                      >
+                        {INTERVIEW_RESULT_LABELS[interview.result] || interview.result}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-purple-200">
+                    <Link
+                      to={`/interviews/${interview._id}`}
+                      className="text-purple-600 hover:text-purple-700 font-medium text-sm inline-flex items-center"
+                    >
+                      Batafsil ko'rish →
+                    </Link>
+                  </div>
+                </div>
+              ) : application.status === 'interview' && !loadingInterview ? (
+                <p className="text-gray-600">Suhbat ma'lumotlari hali tayyorlanmagan</p>
+              ) : null}
             </div>
           )}
         </motion.div>

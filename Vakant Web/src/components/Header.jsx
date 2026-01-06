@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
   const { isAuthenticated, logout, user, isTelegram } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handleLogout = () => {
@@ -24,8 +25,18 @@ const Header = () => {
     return 'U';
   };
 
+  const isActive = (path) => {
+    if (path === '/vacancies') {
+      return location.pathname === '/vacancies' || location.pathname.startsWith('/vacancies/');
+    }
+    if (path === '/interviews') {
+      return location.pathname === '/interviews' || location.pathname.startsWith('/interviews/');
+    }
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
+
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <header className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
@@ -37,21 +48,51 @@ const Header = () => {
             </motion.div>
           </Link>
 
-          <div className="flex items-center space-x-2 md:space-x-6">
+          <div className="flex items-center space-x-2 md:space-x-4 lg:space-x-6">
             <Link
               to="/vacancies"
-              className="text-gray-700 hover:text-blue-600 transition-colors text-sm md:text-base font-medium"
+              className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm md:text-base font-medium ${
+                isActive('/vacancies')
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+              }`}
             >
-              Vakansiyalar
+              <span>Vakansiyalar</span>
             </Link>
             {isAuthenticated ? (
               <>
                 <Link
                   to="/applications"
-                  className="text-gray-700 hover:text-blue-600 transition-colors text-sm md:text-base font-medium"
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-colors text-sm md:text-base font-medium ${
+                    isActive('/applications')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  }`}
                 >
                   <span className="hidden md:inline">Mening arizalarim</span>
                   <span className="md:hidden">Arizalar</span>
+                </Link>
+                
+                <Link
+                  to="/materials"
+                  className={`px-3 py-2 rounded-lg transition-colors text-sm md:text-base font-medium ${
+                    isActive('/materials')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  }`}
+                >
+                  Tayyorlov
+                </Link>
+                
+                <Link
+                  to="/saved-vacancies"
+                  className={`px-3 py-2 rounded-lg transition-colors text-sm md:text-base font-medium ${
+                    isActive('/saved-vacancies')
+                      ? 'text-blue-600 bg-blue-50'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+                  }`}
+                >
+                  Saqlangan
                 </Link>
                 
                 {/* Profile Dropdown */}
@@ -99,12 +140,34 @@ const Header = () => {
                           <p className="text-xs text-gray-500 mt-1">{user?.phone}</p>
                         </div>
                         <Link
+                          to="/profile"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Profil
+                        </Link>
+                        <Link
                           to="/applications"
                           onClick={() => setShowProfileMenu(false)}
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           Mening arizalarim
                         </Link>
+                        <Link
+                          to="/materials"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Tayyorlov
+                        </Link>
+                        <Link
+                          to="/saved-vacancies"
+                          onClick={() => setShowProfileMenu(false)}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Saqlangan vakansiyalar
+                        </Link>
+                        <div className="border-t border-gray-200 my-1"></div>
                         <button
                           onClick={handleLogout}
                           className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"

@@ -47,7 +47,7 @@ Application quyidagi maydonlarga ega:
 
 ### 1. Apply to Vacancy
 
-Vakansiyaga topshirish.
+Vakansiyaga oddiy topshirish.
 
 **Endpoint:** `POST /api/web/applications`
 
@@ -117,6 +117,15 @@ Content-Type: application/json
 {
   "success": false,
   "message": "You have already applied to this vacancy"
+}
+```
+
+
+**400 Bad Request** - Invalid option:
+```json
+{
+  "success": false,
+  "message": "Answer for question \"Qaysi shaharda yashaysiz?\" must be one of the provided options"
 }
 ```
 

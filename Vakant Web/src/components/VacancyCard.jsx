@@ -4,14 +4,35 @@ import { formatCurrency, formatDate } from '../utils/helpers';
 import { WORK_TYPES } from '../utils/constants';
 
 const VacancyCard = ({ vacancy }) => {
+  const isClosed = vacancy.status === 'closed' || vacancy.status === 'inactive';
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
-      className="bg-white border border-gray-200 rounded-lg hover:border-blue-300 shadow-md hover:shadow-xl transition-all duration-200 p-6 cursor-pointer"
+      className={`bg-white border rounded-lg shadow-md hover:shadow-xl transition-all duration-200 p-6 ${
+        isClosed 
+          ? 'border-gray-300 opacity-75 cursor-not-allowed' 
+          : 'border-gray-200 hover:border-blue-300 cursor-pointer'
+      }`}
     >
-      <Link to={`/vacancies/${vacancy._id}`} className="block">
+      {isClosed && (
+        <div className="mb-3">
+          <span className="inline-flex items-center px-3 py-1 rounded-md bg-red-100 text-red-700 text-sm font-medium">
+            Yopilgan
+          </span>
+        </div>
+      )}
+      <Link 
+        to={`/vacancies/${vacancy._id}`} 
+        className="block"
+        onClick={(e) => {
+          if (isClosed) {
+            e.preventDefault();
+          }
+        }}
+      >
         <div className="flex flex-col space-y-4">
           {/* Header */}
           <div className="flex items-start justify-between gap-4">

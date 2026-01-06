@@ -8,18 +8,24 @@ import Alert from '../components/Alert';
 import { formatCurrency, formatDate } from '../utils/helpers';
 import { WORK_TYPES } from '../utils/constants';
 import { renderHTML } from '../utils/htmlUtils';
+import { StarIcon, BookIcon, TestIcon } from '../components/Icons';
 
 const VacancyDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const [vacancy, setVacancy] = useState(null);
+  const [materials, setMaterials] = useState([]);
+  const [loadingMaterials, setLoadingMaterials] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [applying, setApplying] = useState(false);
   const [applySuccess, setApplySuccess] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [checkingApplication, setCheckingApplication] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [checkingSaved, setCheckingSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchVacancy();
@@ -28,8 +34,32 @@ const VacancyDetailPage = () => {
   useEffect(() => {
     if (isAuthenticated && vacancy) {
       checkIfApplied();
+      checkIfSaved();
+      fetchMaterialsForVacancy();
     }
   }, [isAuthenticated, vacancy]);
+
+  const fetchMaterialsForVacancy = async () => {
+    if (!vacancy || !id) return;
+    
+    setLoadingMaterials(true);
+    try {
+      const response = await api.getMaterials();
+      if (response.success) {
+        const allMaterials = response.data.materials || [];
+        // Shu vakansiyaga tegishli materiallarni filter qilish
+        const vacancyMaterials = allMaterials.filter(material => {
+          const vacancyId = material.vacancy?._id || material.vacancy;
+          return vacancyId === id || vacancyId === vacancy._id;
+        });
+        setMaterials(vacancyMaterials);
+      }
+    } catch (err) {
+      console.error('Materiallarni yuklashda xatolik:', err);
+    } finally {
+      setLoadingMaterials(false);
+    }
+  };
 
   const fetchVacancy = async () => {
     setLoading(true);
@@ -67,6 +97,44 @@ const VacancyDetailPage = () => {
     }
   };
 
+  const checkIfSaved = async () => {
+    if (!isAuthenticated || !vacancy) return;
+    
+    setCheckingSaved(true);
+    try {
+      const response = await api.checkSavedVacancy(vacancy._id);
+      if (response.success) {
+        setIsSaved(response.data.isSaved);
+      }
+    } catch (err) {
+      console.error('Saqlangan vakansiya tekshirishda xatolik:', err);
+    } finally {
+      setCheckingSaved(false);
+    }
+  };
+
+  const handleToggleSave = async () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      if (isSaved) {
+        await api.unsaveVacancy(vacancy._id);
+        setIsSaved(false);
+      } else {
+        await api.saveVacancy(vacancy._id);
+        setIsSaved(true);
+      }
+    } catch (err) {
+      setError(err.message || 'Vakansiyani saqlashda xatolik');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleApply = async () => {
     if (!isAuthenticated) {
       navigate('/login');
@@ -81,7 +149,8 @@ const VacancyDetailPage = () => {
     setApplying(true);
     setError('');
     try {
-      const response = await api.applyToVacancy(id);
+      const vacancyIdToUse = vacancy._id || id;
+      const response = await api.applyToVacancy(vacancyIdToUse);
       if (response.success) {
         setApplySuccess(true);
         setHasApplied(true);
@@ -90,7 +159,6 @@ const VacancyDetailPage = () => {
         }, 2000);
       }
     } catch (err) {
-      // Agar allaqachon topshirilgan bo'lsa
       if (err.message && err.message.includes('already applied')) {
         setHasApplied(true);
       }
@@ -102,8 +170,8 @@ const VacancyDetailPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
+        <div className="container mx-auto px-4 py-8 md:py-10 lg:py-12 max-w-7xl">
           <Loading />
         </div>
       </div>
@@ -112,8 +180,8 @@ const VacancyDetailPage = () => {
 
   if (error && !vacancy) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
+      <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
+        <div className="container mx-auto px-4 py-8 md:py-10 lg:py-12 max-w-7xl">
           <Alert message={error} type="error" />
           <Link
             to="/vacancies"
@@ -130,10 +198,12 @@ const VacancyDetailPage = () => {
     return null;
   }
 
+  const isClosed = vacancy.status === 'closed' || vacancy.status === 'inactive';
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
       <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 md:py-6 max-w-7xl">
           <Link
             to="/vacancies"
             className="text-blue-600 hover:text-blue-700 inline-flex items-center text-sm font-medium"
@@ -148,6 +218,12 @@ const VacancyDetailPage = () => {
 
       <div className="container mx-auto px-4 py-8">
         {error && <Alert message={error} type="error" />}
+        {isClosed && (
+          <Alert
+            message="Bu vakansiya yopilgan. Yangi arizalar qabul qilinmaydi."
+            type="warning"
+          />
+        )}
         {applySuccess && (
           <Alert
             message="Ariza muvaffaqiyatli topshirildi!"
@@ -295,6 +371,57 @@ const VacancyDetailPage = () => {
                 </div>
               )}
 
+              {/* O'quv kurslari */}
+              {materials.length > 0 && (
+                <div className="mb-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <BookIcon className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">
+                      O'quv kurslari
+                    </h2>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {materials.map((material) => (
+                      <Link
+                        key={material._id}
+                        to={`/materials/${material._id}`}
+                      >
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          whileHover={{ y: -5 }}
+                          className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-200 cursor-pointer"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <BookIcon className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
+                                {material.title}
+                              </h3>
+                              {material.description && (
+                                <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                                  {material.description}
+                                </p>
+                              )}
+                              {material.tests && material.tests.length > 0 && (
+                                <div className="flex items-center text-xs text-gray-500">
+                                  <TestIcon className="w-3 h-3 mr-1" />
+                                  <span>{material.tests.length} ta test</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="mt-6 pt-6 border-t border-gray-200 text-sm text-gray-500">
                 Yaratilgan: {formatDate(vacancy.createdAt)}
               </div>
@@ -320,19 +447,23 @@ const VacancyDetailPage = () => {
               ) : (
                 <>
                   <motion.button
-                    whileHover={hasApplied ? {} : { scale: 1.02 }}
-                    whileTap={hasApplied ? {} : { scale: 0.98 }}
+                    whileHover={hasApplied || isClosed ? {} : { scale: 1.02 }}
+                    whileTap={hasApplied || isClosed ? {} : { scale: 0.98 }}
                     onClick={handleApply}
-                    disabled={applying || applySuccess || hasApplied}
+                    disabled={applying || applySuccess || hasApplied || isClosed}
                     className={`w-full py-4 rounded-lg font-semibold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                       hasApplied
                         ? 'bg-green-100 text-green-700 cursor-default'
+                        : isClosed
+                        ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                         : isAuthenticated
                         ? 'bg-blue-600 text-white hover:bg-blue-700'
                         : 'bg-gray-300 text-gray-600 cursor-not-allowed'
                     }`}
                   >
-                    {!isAuthenticated
+                    {isClosed
+                      ? 'Vakansiya yopilgan'
+                      : !isAuthenticated
                       ? 'Kirish kerak'
                       : hasApplied
                       ? 'Ariza topshirilgan'
@@ -361,6 +492,33 @@ const VacancyDetailPage = () => {
                     </Link>
                   )}
                 </>
+              )}
+
+              {isAuthenticated && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleToggleSave}
+                    disabled={saving || checkingSaved}
+                    className={`w-full py-3 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                      isSaved
+                        ? 'bg-yellow-500 text-white hover:bg-yellow-600'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    <StarIcon className="w-5 h-5" filled={isSaved} />
+                    <span>
+                      {saving
+                        ? 'Kutilmoqda...'
+                        : checkingSaved
+                        ? 'Tekshirilmoqda...'
+                        : isSaved
+                        ? 'Saqlangan'
+                        : 'Saqlash'}
+                    </span>
+                  </motion.button>
+                </div>
               )}
 
               {vacancy.company && (

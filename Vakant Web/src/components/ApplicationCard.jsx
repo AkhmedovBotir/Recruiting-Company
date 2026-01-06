@@ -64,6 +64,16 @@ const ApplicationCard = ({ application }) => {
           </div>
         )}
 
+        {application.status === 'interview' && (
+          <div className="pt-2 border-t">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-semibold text-purple-700 bg-purple-100 px-2 py-1 rounded">
+                Intervyuga qabul qilingan
+              </span>
+            </div>
+          </div>
+        )}
+
         <div className="flex items-center justify-between pt-2">
           <span className="text-xs text-gray-500">
             Topshirilgan: {formatDate(application.createdAt)}

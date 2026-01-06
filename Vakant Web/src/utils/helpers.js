@@ -65,12 +65,26 @@ export const formatDate = (dateString) => {
   });
 };
 
+export const isURL = (str) => {
+  if (!str) return false;
+  const urlPattern = /^(https?:\/\/|www\.)/i;
+  return urlPattern.test(str);
+};
+
+export const formatURL = (url) => {
+  if (!url) return url;
+  // Agar http:// yoki https:// bo'lmasa, qo'shib qo'yamiz
+  if (!/^https?:\/\//i.test(url)) {
+    return `https://${url}`;
+  }
+  return url;
+};
+
 export const formatCurrency = (amount) => {
-  if (!amount) return '';
-  // Remove "so'm" if already present
-  const cleaned = amount.toString().replace(/\s*so['']?m\s*/gi, '').replace(/\D/g, '');
-  if (!cleaned) return amount;
-  return new Intl.NumberFormat('uz-UZ').format(cleaned) + ' so\'m';
+  if (!amount && amount !== 0) return '';
+  
+  // Return the amount as is without formatting
+  return amount.toString();
 };
 
 export const getToken = () => {
@@ -83,5 +97,28 @@ export const setToken = (token) => {
 
 export const removeToken = () => {
   localStorage.removeItem('token');
+};
+
+export const getUser = () => {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return null;
+  try {
+    return JSON.parse(userStr);
+  } catch (error) {
+    console.error('Error parsing user data from localStorage:', error);
+    return null;
+  }
+};
+
+export const setUser = (user) => {
+  if (user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  } else {
+    localStorage.removeItem('user');
+  }
+};
+
+export const removeUser = () => {
+  localStorage.removeItem('user');
 };
 

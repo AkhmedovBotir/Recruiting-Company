@@ -583,6 +583,7 @@ const EditVacancyModal = ({ isOpen, onClose, onUpdate, vacancy }) => {
                     ))}
                   </div>
                 </div>
+
               </div>
 
               {/* Footer */}

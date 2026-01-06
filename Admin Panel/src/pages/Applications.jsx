@@ -591,6 +591,7 @@ const Applications = () => {
               setSelectedApplication(null);
             }}
             application={selectedApplication}
+            onStatusUpdate={fetchApplications}
           />
 
           <UpdateStatusModal

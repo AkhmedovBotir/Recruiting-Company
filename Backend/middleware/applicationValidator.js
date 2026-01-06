@@ -8,6 +8,18 @@ const validateApplyToVacancy = [
     .withMessage('Vacancy ID is required')
     .isMongoId()
     .withMessage('Invalid vacancy ID'),
+  body('answers')
+    .optional()
+    .isArray()
+    .withMessage('Answers must be an array'),
+  body('answers.*.questionId')
+    .optional()
+    .isMongoId()
+    .withMessage('Invalid question ID'),
+  body('answers.*.answer')
+    .optional()
+    .custom((value) => value !== undefined)
+    .withMessage('Answer is required for provided question'),
   validate,
 ];
 
