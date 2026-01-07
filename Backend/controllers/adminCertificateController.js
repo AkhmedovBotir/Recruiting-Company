@@ -637,7 +637,7 @@ const saveCertificateBase64 = async (req, res) => {
       });
     }
 
-    // Validate base64 format
+    // Basic validation
     if (!certificateBase64.startsWith('data:image/')) {
       return res.status(400).json({
         success: false,
@@ -654,18 +654,13 @@ const saveCertificateBase64 = async (req, res) => {
       });
     }
 
-    // Save certificate base64
     certificate.certificateBase64 = certificateBase64;
     await certificate.save();
 
-    // Populate details
     await certificate.populate('candidate', 'firstName lastName phone telegramId');
     await certificate.populate({
       path: 'vacancy',
-      populate: {
-        path: 'company',
-        select: 'name inn',
-      },
+      populate: { path: 'company', select: 'name inn' },
     });
     await certificate.populate('interview', 'date time interviewer result');
     await certificate.populate('issuedBy', 'username email');

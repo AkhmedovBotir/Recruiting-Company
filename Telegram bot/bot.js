@@ -1,7 +1,10 @@
 const { Telegraf } = require('telegraf');
 const config = require('./config/config');
 const registrationHandler = require('./handlers/registrationHandler');
+const mainMenuHandler = require('./handlers/mainMenuHandler');
 const validator = require('./utils/validator');
+const userStorage = require('./storage/userStorage');
+const STATES = require('./constants/states');
 
 // Initialize bot
 const bot = new Telegraf(config.bot.token);
@@ -15,17 +18,73 @@ if (!config.bot.token) {
 // Register command handlers
 bot.start(registrationHandler.handleStart);
 bot.command('register', registrationHandler.handleRegister);
+bot.command('menu', mainMenuHandler.showMainMenu);
+
+// Handle callback queries (inline button clicks)
+bot.on('callback_query', async (ctx) => {
+  try {
+    const callbackData = ctx.callbackQuery.data;
+    
+    // Handle vacancy details
+    if (callbackData.startsWith('vacancy_')) {
+      const vacancyId = callbackData.replace('vacancy_', '');
+      await mainMenuHandler.handleVacancyDetails(ctx, vacancyId);
+      return; // answerCbQuery is called inside handleVacancyDetails
+    }
+    
+    // Handle certificate details
+    if (callbackData.startsWith('cert_')) {
+      const certificateId = callbackData.replace('cert_', '');
+      await mainMenuHandler.handleCertificateDetails(ctx, certificateId);
+      return; // answerCbQuery is called inside handleCertificateDetails
+    }
+    
+    // Default answer for unknown callbacks
+    await ctx.answerCbQuery();
+  } catch (error) {
+    console.error('Callback query error:', error);
+    await ctx.answerCbQuery('Xatolik yuz berdi', true).catch(console.error);
+  }
+});
 
 // Handle text messages
 bot.on('text', async (ctx) => {
-  // Check if it's a phone number pattern (for manual phone input)
   const text = ctx.message.text.trim();
+  const userId = ctx.from.id;
+  const data = userStorage.get(userId);
+  
+  // Handle main menu commands if user is registered
+  if (data && data.token && data.step === STATES.COMPLETED) {
+    switch (text) {
+      case '📋 Vakansiyalar':
+        await mainMenuHandler.handleVacancies(ctx);
+        return;
+      case '👤 Profilim':
+      case '👤 Mening profilim':
+        await mainMenuHandler.handleProfile(ctx);
+        return;
+      case '📝 Topshirishlarim':
+      case '📝 Mening topshirishlarim':
+        await mainMenuHandler.handleApplications(ctx);
+        return;
+      case '🎯 Suhbatlarim':
+      case '🎯 Mening suhbatlarim':
+        await mainMenuHandler.handleInterviews(ctx);
+        return;
+      case '🏆 Sertifikatlarim':
+      case '🏆 Mening sertifikatlarim':
+        await mainMenuHandler.handleCertificates(ctx);
+        return;
+    }
+  }
+  
+  // Check if it's a phone number pattern (for manual phone input)
   if (validator.validatePhone(text)) {
     await registrationHandler.handlePhoneText(ctx);
     return;
   }
   
-  // Handle other text messages (name, code, etc.)
+  // Handle other text messages (name, code, etc.) during registration
   await registrationHandler.handleText(ctx);
 });
 

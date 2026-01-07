@@ -19,6 +19,8 @@ import SavedVacanciesPage from './pages/SavedVacanciesPage';
 import ProfilePage from './pages/ProfilePage';
 import InterviewsPage from './pages/InterviewsPage';
 import InterviewDetailPage from './pages/InterviewDetailPage';
+import CertificatesPage from './pages/CertificatesPage';
+import CertificateDetailPage from './pages/CertificateDetailPage';
 
 const AppContent = () => {
   return (
@@ -93,6 +95,22 @@ const AppContent = () => {
             element={
               <ProtectedRoute>
                 <InterviewDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/certificates"
+            element={
+              <ProtectedRoute>
+                <CertificatesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/certificates/:id"
+            element={
+              <ProtectedRoute>
+                <CertificateDetailPage />
               </ProtectedRoute>
             }
           />

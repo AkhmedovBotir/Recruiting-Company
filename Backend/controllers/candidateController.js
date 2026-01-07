@@ -5,18 +5,18 @@ const generateToken = require('../utils/generateToken');
 
 // ==================== BOT ENDPOINTS ====================
 
-// @desc    Bot: Start registration (send SMS code)
-// @route   POST /api/candidates/bot/register-start
+// @desc    Bot: Start login (send SMS code)
+// @route   POST /api/candidates/bot/login-start
 // @access  Public
-const botRegisterStart = async (req, res) => {
+const botLoginStart = async (req, res) => {
   try {
-    const { firstName, lastName, phone, telegramId } = req.body;
+    const { phone } = req.body;
 
     // Validate input
-    if (!firstName || !lastName || !phone || !telegramId) {
+    if (!phone) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide firstName, lastName, phone, and telegramId',
+        message: 'Please provide phone number',
       });
     }
 
@@ -25,18 +25,6 @@ const botRegisterStart = async (req, res) => {
     const finalPhone = formattedPhone.startsWith('998')
       ? `+${formattedPhone}`
       : `+998${formattedPhone}`;
-
-    // Check if candidate already exists
-    const existingCandidate = await Candidate.findOne({
-      $or: [{ phone: finalPhone }, { telegramId }],
-    });
-
-    if (existingCandidate) {
-      return res.status(400).json({
-        success: false,
-        message: 'Candidate with this phone or telegram ID already exists',
-      });
-    }
 
     // Generate and send verification code
     const code = smsService.generateCode();
@@ -61,7 +49,7 @@ const botRegisterStart = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Bot register start error:', error);
+    console.error('Bot login start error:', error);
     res.status(500).json({
       success: false,
       message: 'Server error',
@@ -69,18 +57,18 @@ const botRegisterStart = async (req, res) => {
   }
 };
 
-// @desc    Bot: Verify code and complete registration
+// @desc    Bot: Verify code and check if candidate exists
 // @route   POST /api/candidates/bot/verify
 // @access  Public
 const botVerify = async (req, res) => {
   try {
-    const { phone, code, firstName, lastName, telegramId } = req.body;
+    const { phone, code } = req.body;
 
     // Validate input
-    if (!phone || !code || !firstName || !lastName || !telegramId) {
+    if (!phone || !code) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide phone, code, firstName, lastName, and telegramId',
+        message: 'Please provide phone and code',
       });
     }
 
@@ -99,23 +87,16 @@ const botVerify = async (req, res) => {
       });
     }
 
-    // Check if candidate already exists
-    let candidate = await Candidate.findOne({ phone: finalPhone });
+    // Check if candidate exists
+    const candidate = await Candidate.findOne({ phone: finalPhone });
 
     if (candidate) {
-      // Update telegram ID if not set
-      if (!candidate.telegramId) {
-        candidate.telegramId = telegramId;
-        candidate.registrationType = 'bot';
-        await candidate.save();
-      }
-
-      // Generate token
+      // Candidate exists, return token and data
       const token = generateToken(candidate._id);
 
       return res.status(200).json({
         success: true,
-        message: 'Registration successful',
+        message: 'Login successful',
         data: {
           token,
           candidate: {
@@ -124,13 +105,88 @@ const botVerify = async (req, res) => {
             lastName: candidate.lastName,
             phone: candidate.phone,
             telegramId: candidate.telegramId,
+            registrationType: candidate.registrationType,
+          },
+          exists: true,
+        },
+      });
+    }
+
+    // Candidate doesn't exist, need registration
+    res.status(200).json({
+      success: true,
+      message: 'Candidate not found, registration required',
+      data: {
+        phone: finalPhone,
+        exists: false,
+      },
+    });
+  } catch (error) {
+    console.error('Bot verify error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+    });
+  }
+};
+
+// @desc    Bot: Register new candidate
+// @route   POST /api/candidates/bot/register
+// @access  Public
+const botRegister = async (req, res) => {
+  try {
+    const { phone, firstName, lastName, telegramId } = req.body;
+
+    // Validate input
+    if (!phone || !firstName || !lastName || !telegramId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide phone, firstName, lastName, and telegramId',
+      });
+    }
+
+    // Format phone number
+    const formattedPhone = phone.replace(/[+\s-()]/g, '');
+    const finalPhone = formattedPhone.startsWith('998')
+      ? `+${formattedPhone}`
+      : `+998${formattedPhone}`;
+
+    // Check if candidate already exists
+    const existingCandidate = await Candidate.findOne({
+      $or: [{ phone: finalPhone }, { telegramId }],
+    });
+
+    if (existingCandidate) {
+      // If exists, update telegramId if needed and return token
+      if (!existingCandidate.telegramId) {
+        existingCandidate.telegramId = telegramId;
+        if (existingCandidate.registrationType !== 'bot') {
+          existingCandidate.registrationType = 'bot';
+        }
+        await existingCandidate.save();
+      }
+
+      const token = generateToken(existingCandidate._id);
+
+      return res.status(200).json({
+        success: true,
+        message: 'Candidate already exists',
+        data: {
+          token,
+          candidate: {
+            id: existingCandidate._id,
+            firstName: existingCandidate.firstName,
+            lastName: existingCandidate.lastName,
+            phone: existingCandidate.phone,
+            telegramId: existingCandidate.telegramId,
+            registrationType: existingCandidate.registrationType,
           },
         },
       });
     }
 
     // Create new candidate
-    candidate = await Candidate.create({
+    const candidate = await Candidate.create({
       firstName,
       lastName,
       phone: finalPhone,
@@ -152,11 +208,12 @@ const botVerify = async (req, res) => {
           lastName: candidate.lastName,
           phone: candidate.phone,
           telegramId: candidate.telegramId,
+          registrationType: candidate.registrationType,
         },
       },
     });
   } catch (error) {
-    console.error('Bot verify error:', error);
+    console.error('Bot register error:', error);
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
@@ -380,8 +437,9 @@ const webRegister = async (req, res) => {
 };
 
 module.exports = {
-  botRegisterStart,
+  botLoginStart,
   botVerify,
+  botRegister,
   webLoginStart,
   webVerify,
   webRegister,

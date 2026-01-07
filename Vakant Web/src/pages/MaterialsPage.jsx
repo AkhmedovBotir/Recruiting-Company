@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import api from '../services/api';
 import Loading from '../components/Loading';
@@ -10,6 +10,9 @@ import { formatDate, formatCurrency } from '../utils/helpers';
 const MaterialsPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  // Determine active tab based on current route
+  const activeTab = location.pathname === '/certificates' ? 'certificates' : 'materials';
   const [materials, setMaterials] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -155,6 +158,32 @@ const MaterialsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 pb-20 md:pb-8">
       <div className="container mx-auto px-4 py-8 md:py-10 lg:py-12 max-w-7xl">
+        {/* Tab Navigation */}
+        <div className="bg-white rounded-lg shadow-md mb-6">
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => navigate('/materials')}
+              className={`flex-1 px-4 py-3 text-center font-medium transition-colors ${
+                activeTab === 'materials'
+                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Darslar
+            </button>
+            <button
+              onClick={() => navigate('/certificates')}
+              className={`flex-1 px-4 py-3 text-center font-medium transition-colors ${
+                activeTab === 'certificates'
+                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Sertifikatlar
+            </button>
+          </div>
+        </div>
+
         {error && <Alert message={error} type="error" />}
 
         {loading ? (

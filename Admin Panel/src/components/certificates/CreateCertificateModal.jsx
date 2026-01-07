@@ -41,12 +41,12 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
     try {
       setLoadingData(true);
       setSubmitError(null);
-      
+
       // First, issue the certificate
-      const interviewId = candidate.interview.id || candidate.interview._id;
-      if (!interviewId) {
+    const interviewId = candidate.interview.id || candidate.interview._id;
+    if (!interviewId) {
         throw new Error('Suhbat ID topilmadi');
-      }
+    }
 
       // Issue certificate first
       const issueResponse = await certificateService.issueCertificate({ interviewId });
@@ -57,7 +57,7 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
 
       const certificate = issueResponse.data.certificate;
       setCertificateData(certificate);
-
+      
       // Get certificate data for frontend
       const frontendResponse = await certificateService.getCertificateForFrontend(certificate._id || certificate.id);
       
@@ -307,25 +307,35 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
    */
   const saveCertificateToBackend = async () => {
     const canvas = canvasRef.current;
-    if (!canvas || !certificateData) return null;
+    if (!canvas || !certificateData) {
+      throw new Error('Canvas yoki sertifikat ma\'lumotlari topilmadi');
+    }
 
-    return new Promise((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64 = reader.result;
-          try {
-            const certificateId = certificateData._id || certificateData.id;
-            const response = await certificateService.saveCertificate(certificateId, base64);
-            resolve(response);
-          } catch (error) {
-            reject(error);
-          }
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      }, 'image/png');
-    });
+    try {
+      // Convert canvas directly to base64 data URL (format: data:image/png;base64,...)
+      const certificateBase64 = canvas.toDataURL('image/png');
+      
+      // Validate format
+      if (!certificateBase64 || !certificateBase64.startsWith('data:image/')) {
+        throw new Error('Sertifikat rasmi to\'g\'ri formatda emas');
+      }
+
+      const certificateId = certificateData._id || certificateData.id;
+      if (!certificateId) {
+        throw new Error('Sertifikat ID topilmadi');
+      }
+
+      const response = await certificateService.saveCertificate(certificateId, certificateBase64);
+      
+      if (!response || !response.success) {
+        throw new Error(response?.message || 'Sertifikatni saqlashda xatolik yuz berdi');
+      }
+
+      return response;
+    } catch (error) {
+      console.error('Error saving certificate to backend:', error);
+      throw error;
+    }
   };
 
   /**
@@ -336,8 +346,12 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
       setLoadingData(true);
       setSubmitError(null);
       
-      // Save certificate to backend
-      await saveCertificateToBackend();
+      // Save certificate to backend (base64 format)
+      const saveResponse = await saveCertificateToBackend();
+      
+      if (!saveResponse || !saveResponse.success) {
+        throw new Error(saveResponse?.message || 'Sertifikatni saqlashda xatolik yuz berdi');
+      }
       
       // Download certificate
       downloadCertificate();
@@ -408,17 +422,17 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
                   <div className="text-center">
                     <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                     <p className="mt-4 text-gray-600">Sertifikat yaratilmoqda...</p>
-                  </div>
-                </div>
+                      </div>
+                    </div>
               ) : submitError ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <div className="flex items-start">
-                    <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <p className="text-sm text-red-700">{submitError}</p>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-start">
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      <p className="text-sm text-red-700">{submitError}</p>
+                    </div>
                   </div>
-                </div>
               ) : certificateImage ? (
                 <div className="space-y-4">
                   {/* Editor Controls */}
@@ -460,7 +474,7 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
                     <div className="mt-3 text-xs text-gray-600">
                       <p>💡 Ism-familiya va QR kodni surib joylashtiring</p>
                     </div>
-                  </div>
+              </div>
 
                   {/* Canvas Container */}
                   <div 
@@ -501,15 +515,15 @@ const CreateCertificateModal = ({ isOpen, onClose, onIssue, candidate, loading }
                       className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer"
                     >
                       Yuklab Olish
-                    </button>
-                    <button
-                      type="button"
+                </button>
+                <button
+                  type="button"
                       onClick={handleFinalize}
                       disabled={loadingData}
-                      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                    >
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                >
                       {loadingData ? 'Saqlanmoqda...' : 'Saqlash va Tugatish'}
-                    </button>
+                </button>
                   </>
                 )}
               </div>

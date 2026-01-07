@@ -22,8 +22,8 @@ router.get('/:id/for-frontend', getCertificateForFrontend);
 router.get('/', getCertificates);
 router.get('/:id', getCertificate);
 router.post('/', issueCertificate);
-router.put('/:id/save-certificate', saveCertificateBase64);
 router.patch('/:id/revoke', revokeCertificate);
+router.put('/:id/save-certificate', saveCertificateBase64);
 
 module.exports = router;
 

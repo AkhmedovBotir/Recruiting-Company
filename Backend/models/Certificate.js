@@ -32,6 +32,11 @@ const certificateSchema = new mongoose.Schema(
       unique: true,
       sparse: true,
     },
+    // Edited certificate image (base64) provided by frontend after rendering name/QR
+    certificateBase64: {
+      type: String,
+      trim: true,
+    },
     issuedDate: {
       type: Date,
       required: true,
@@ -46,10 +51,6 @@ const certificateSchema = new mongoose.Schema(
       type: String,
       enum: ['active', 'revoked'],
       default: 'active',
-    },
-    certificateBase64: {
-      type: String,
-      // Store the edited certificate image in base64 format
     },
   },
   {

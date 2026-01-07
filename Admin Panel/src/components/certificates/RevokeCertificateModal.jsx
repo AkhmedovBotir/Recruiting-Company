@@ -103,3 +103,4 @@ const RevokeCertificateModal = ({ isOpen, onClose, onRevoke, certificate, loadin
 
 export default RevokeCertificateModal;
 
+

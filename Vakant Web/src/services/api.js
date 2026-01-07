@@ -239,6 +239,21 @@ class ApiService {
   async getInterview(id) {
     return this.request(`/web/interviews/${id}`, { method: 'GET' });
   }
+
+  // Certificate Endpoints
+  async getMyCertificates(params = {}) {
+    const queryParams = new URLSearchParams(params).toString();
+    const endpoint = `/web/certificates${queryParams ? `?${queryParams}` : ''}`;
+    return this.request(endpoint, { method: 'GET' });
+  }
+
+  async getCertificate(id) {
+    return this.request(`/web/certificates/${id}`, { method: 'GET' });
+  }
+
+  async downloadCertificate(id) {
+    return this.request(`/web/certificates/${id}/download`, { method: 'GET' });
+  }
 }
 
 export default new ApiService(API_BASE_URL);

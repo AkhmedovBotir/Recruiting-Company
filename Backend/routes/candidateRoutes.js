@@ -1,23 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const {
-  botRegisterStart,
+  botLoginStart,
   botVerify,
+  botRegister,
   webLoginStart,
   webVerify,
   webRegister,
 } = require('../controllers/candidateController');
 const {
-  validateBotRegisterStart,
+  validateBotLoginStart,
   validateBotVerify,
+  validateBotRegister,
   validateWebLoginStart,
   validateWebVerify,
   validateWebRegister,
 } = require('../middleware/candidateValidator');
 
 // Bot routes
-router.post('/bot/register-start', validateBotRegisterStart, botRegisterStart);
+router.post('/bot/login-start', validateBotLoginStart, botLoginStart);
 router.post('/bot/verify', validateBotVerify, botVerify);
+router.post('/bot/register', validateBotRegister, botRegister);
 
 // Web routes
 router.post('/web/login-start', validateWebLoginStart, webLoginStart);

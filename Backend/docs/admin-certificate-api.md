@@ -30,7 +30,7 @@ Certificate quyidagi maydonlarga ega:
 - `application` (ObjectId, optional) - Application ID (reference to Application)
 - `certificateNumber` (String, required, unique) - Sertifikat raqami (avtomatik generatsiya qilinadi)
 - `qrCode` (String, required, unique) - QR kod token (avtomatik generatsiya qilinadi)
-- `certificateBase64` (String, optional) - To'g'rilangan sertifikat rasm (base64 formatida)
+- `certificateBase64` (String, optional) - Frontendda to'g'rilangan sertifikat rasm (base64)
 - `issuedDate` (Date, required) - Berilgan sana (default: hozirgi sana)
 - `issuedBy` (ObjectId, required) - Bergan admin ID (reference to Admin)
 - `status` (String, enum: ['active', 'revoked']) - Status (default: 'active')
@@ -566,7 +566,7 @@ curl -X PUT http://localhost:3000/api/admin/certificates/507f1f77bcf86cd79943907
 ```
 
 **Note:** 
-- Frontend sertifikatni edit qilgandan keyin (ism-familiya va QR kod qo'shgandan keyin) base64 formatida yuboradi
+- Frontend sertifikatni (ism-familiya va QR kod joylashtirib) tayyorlagandan keyin base64 formatida yuboradi
 - Bazada saqlanadi va keyinchalik ko'rish yoki yuklab olish uchun ishlatiladi
 
 ---

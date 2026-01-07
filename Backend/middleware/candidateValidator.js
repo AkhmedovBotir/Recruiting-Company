@@ -1,31 +1,11 @@
 const { body, validationResult } = require('express-validator');
 const { validate } = require('./validator');
 
-// Bot register start validation
-const validateBotRegisterStart = [
-  body('firstName')
-    .notEmpty()
-    .withMessage('First name is required')
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage('First name must be at least 2 characters')
-    .isLength({ max: 50 })
-    .withMessage('First name cannot exceed 50 characters'),
-  body('lastName')
-    .notEmpty()
-    .withMessage('Last name is required')
-    .trim()
-    .isLength({ min: 2 })
-    .withMessage('Last name must be at least 2 characters')
-    .isLength({ max: 50 })
-    .withMessage('Last name cannot exceed 50 characters'),
+// Bot login start validation
+const validateBotLoginStart = [
   body('phone')
     .notEmpty()
     .withMessage('Phone number is required')
-    .trim(),
-  body('telegramId')
-    .notEmpty()
-    .withMessage('Telegram ID is required')
     .trim(),
   validate,
 ];
@@ -44,6 +24,15 @@ const validateBotVerify = [
     .withMessage('Verification code must be 5 digits')
     .isNumeric()
     .withMessage('Verification code must be numeric'),
+  validate,
+];
+
+// Bot register validation
+const validateBotRegister = [
+  body('phone')
+    .notEmpty()
+    .withMessage('Phone number is required')
+    .trim(),
   body('firstName')
     .notEmpty()
     .withMessage('First name is required')
@@ -119,8 +108,9 @@ const validateWebRegister = [
 ];
 
 module.exports = {
-  validateBotRegisterStart,
+  validateBotLoginStart,
   validateBotVerify,
+  validateBotRegister,
   validateWebLoginStart,
   validateWebVerify,
   validateWebRegister,

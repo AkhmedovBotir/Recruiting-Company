@@ -156,14 +156,14 @@ export const saveCertificate = async (id, certificateBase64) => {
 
 /**
  * Verify certificate by QR code (public endpoint)
- * Note: Endpoint always returns JSON format
+ * Note: Backend default redirects to frontend, so we request JSON explicitly
  * @param {string} qrCode - QR code token
  * @returns {Promise<object>} Certificate verification data
  */
 export const verifyCertificate = async (qrCode) => {
   try {
-    // Endpoint always returns JSON format (no format parameter needed)
-    const response = await apiRequest(`/certificates/verify/${qrCode}`, {
+    // Ask for JSON to avoid redirect
+    const response = await apiRequest(`/certificates/verify/${qrCode}?format=json`, {
       method: 'GET',
     }, false); // Public endpoint, no auth required
 

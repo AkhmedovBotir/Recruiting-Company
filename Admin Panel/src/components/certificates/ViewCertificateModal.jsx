@@ -249,7 +249,7 @@ const ViewCertificateModal = ({ isOpen, onClose, certificate }) => {
                         {cert.qrCode}
                       </p>
                       <p className="text-xs text-blue-600 mt-2">
-                        QR kod skaner qilganda sertifikat ma'lumotlari ko'rsatiladi
+                        Frontend URL: {`${window.location.origin}/certificates/verify/${cert.qrCode}`}
                       </p>
                     </div>
                   )}

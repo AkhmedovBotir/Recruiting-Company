@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="uz" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kompaniya Integrasiya API - Qo'llanma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <style>
+        .code-block {
+            position: relative;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .code-block:hover .copy-btn {
+            opacity: 1;
+        }
+        pre[class*="language-"] {
+            margin: 0;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <h1 class="text-4xl font-bold mb-2">Kompaniya Integrasiya API</h1>
+            <p class="text-blue-100 text-lg">O'z tizimlaringizni bizning platforma bilan integratsiya qiling</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap items-center justify-between py-4">
+                <div class="flex space-x-6">
+                    <a href="#overview" class="text-gray-700 hover:text-blue-600 font-medium transition">Kirish</a>
+                    <a href="#endpoints" class="text-gray-700 hover:text-blue-600 font-medium transition">Endpoints</a>
+                    <a href="#examples" class="text-gray-700 hover:text-blue-600 font-medium transition">Misollar</a>
+                    <a href="#data-structure" class="text-gray-700 hover:text-blue-600 font-medium transition">Ma'lumotlar</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">Public API</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Overview Section -->
+        <section id="overview" class="mb-12">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <h2 class="text-3xl font-bold mb-4 text-gray-800">Kirish</h2>
+                <div class="space-y-4 text-gray-700">
+                    <p class="text-lg">
+                        Bu API kompaniyalarga o'z tizimlarini bizning platforma bilan integratsiya qilish imkonini beradi. 
+                        Sertifikatga ega nomzodlarning barcha ma'lumotlarini olish uchun foydalaning.
+                    </p>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                        <p class="font-semibold text-blue-800 mb-2">⚠️ Muhim:</p>
+                        <p class="text-blue-700">Bu API endpointlar <strong>authentication talab qilmaydi</strong> (public endpoints). 
+                        Barcha endpointlar ochiq va hech qanday token yoki autentifikatsiya kerak emas.</p>
+                    </div>
+
+                    <div class="bg-gray-100 rounded-lg p-6 mt-6">
+                        <h3 class="text-xl font-semibold mb-3 text-gray-800">Base URL</h3>
+                        <code class="text-lg font-mono bg-white px-4 py-2 rounded block">
+                            http://localhost:3000/api/company-integration
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Endpoints Section -->
+        <section id="endpoints" class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">API Endpoints</h2>
+
+            <!-- Endpoint 1 -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded font-semibold text-sm">GET</span>
+                        <h3 class="text-2xl font-bold text-gray-800">Sertifikat ID orqali ma'lumot olish</h3>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                    <code class="text-lg font-mono">
+                        GET /api/company-integration/certificate/:certificateId
+                    </code>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">URL Parameters:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">certificateId</code> (required) - Sertifikat ID (MongoDB ObjectId)</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Request Headers:</h4>
+                        <div class="code-block bg-gray-900 rounded-lg">
+                            <button class="copy-btn bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700" onclick="copyCode(this)">
+                                Copy
+                            </button>
+                            <pre><code class="language-json">{
+  "Content-Type": "application/json"
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Success Response (200 OK):</h4>
+                        <div class="code-block bg-gray-900 rounded-lg">
+                            <button class="copy-btn bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700" onclick="copyCode(this)">
+                                Copy
+                            </button>
+                            <pre><code class="language-json">{
+  "success": true,
+  "data": {
+    "certificate": {
+      "id": "507f1f77bcf86cd799439071",
+      "certificateNumber": "CERT-20240120-1",
+      "qrCode": "c959393d10c6a7404a43d403e020dc084e662b5bb75315e9b45da188010fc679",
+      "issuedDate": "2024-01-21T10:00:00.000Z",
+      "status": "active"
+    },
+    "candidate": {
+      "id": "507f1f77bcf86cd799439013",
+      "firstName": "John",
+      "lastName": "Doe",
+      "fullName": "John Doe",
+      "phone": "+998901234567",
+      "telegramId": "@johndoe",
+      "registrationType": "web"
+    },
+    "vacancy": {
+      "id": "507f1f77bcf86cd799439011",
+      "title": "Senior Full Stack Developer",
+      "department": "IT",
+      "position": "Senior Developer",
+      "experience": "3-5 years",
+      "workType": "full-time",
+      "minAge": 25,
+      "maxAge": 40,
+      "salary": "1500-2000 USD",
+      "description": "We are looking for an experienced Full Stack Developer...",
+      "responsibilities": ["Develop and maintain web applications"],
+      "preferences": ["Experience with React and Node.js"],
+      "skills": ["JavaScript", "React", "Node.js", "MongoDB"],
+      "company": {
+        "_id": "507f1f77bcf86cd799439012",
+        "name": "Tech Solutions LLC",
+        "inn": "123456789",
+        "ownerFullName": "Ahmadjon Karimov",
+        "companyPhone": "+998901111111"
+      }
+    },
+    "interview": {
+      "id": "507f1f77bcf86cd799439061",
+      "date": "2024-01-20T00:00:00.000Z",
+      "time": "14:00",
+      "interviewer": "Ahmadjon Karimov",
+      "content": "JavaScript va React bo'yicha texnik suhbat",
+      "location": "Zoom: https://zoom.us/j/123456789",
+      "result": "passed",
+      "status": "completed",
+      "evaluations": [
+        {
+          "id": "507f1f77bcf86cd799439063",
+          "admin": {
+            "id": "507f1f77bcf86cd799439001",
+            "username": "admin"
+          },
+          "text": "Yaxshi bilimga ega, muammolarni hal qilish qobiliyati yuqori.",
+          "rating": 8,
+          "createdAt": "2024-01-20T15:00:00.000Z"
+        }
+      ],
+      "averageRating": 8.0
+    },
+    "application": {
+      "id": "507f1f77bcf86cd799439021",
+      "status": "passed",
+      "notes": null,
+      "createdAt": "2024-01-15T12:00:00.000Z",
+      "updatedAt": "2024-01-20T15:30:00.000Z"
+    },
+    "testResults": [
+      {
+        "id": "507f1f77bcf86cd799439051",
+        "material": {
+          "id": "507f1f77bcf86cd799439031",
+          "title": "JavaScript Fundamentals"
+        },
+        "answers": [
+          {
+            "questionIndex": 0,
+            "answer": "A",
+            "isCorrect": true
+          }
+        ],
+        "correctCount": 2,
+        "incorrectCount": 1,
+        "totalQuestions": 3,
+        "score": 66.67,
+        "completedAt": "2024-01-16T10:00:00.000Z"
+      }
+    ],
+    "averageTestScore": 83.34,
+    "issuedBy": {
+      "id": "507f1f77bcf86cd799439001",
+      "username": "admin",
+      "email": "admin@example.com"
+    }
+  }
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Error Responses:</h4>
+                        <div class="space-y-2">
+                            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded">
+                                <p class="font-semibold text-red-800">400 Bad Request</p>
+                                <p class="text-red-700 text-sm">Sertifikat bekor qilingan</p>
+                            </div>
+                            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded">
+                                <p class="font-semibold text-red-800">404 Not Found</p>
+                                <p class="text-red-700 text-sm">Sertifikat topilmadi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Endpoint 2 -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 bg-green-100 text-green-800 rounded font-semibold text-sm">GET</span>
+                        <h3 class="text-2xl font-bold text-gray-800">Sertifikat raqami orqali ma'lumot olish</h3>
+                    </div>
+                </div>
+
+                <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                    <code class="text-lg font-mono">
+                        GET /api/company-integration/certificate-number/:certificateNumber
+                    </code>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">URL Parameters:</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">certificateNumber</code> (required) - Sertifikat raqami (format: CERT-YYYYMMDD-N, masalan: CERT-20240120-1)</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                        <p class="font-semibold text-yellow-800 mb-1">Sertifikat raqami formati:</p>
+                        <p class="text-yellow-700 text-sm"><code>CERT-YYYYMMDD-N</code></p>
+                        <p class="text-yellow-700 text-sm mt-1">Masalan: <code>CERT-20240120-1</code></p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">Response:</h4>
+                        <p class="text-gray-700">Yuqoridagi endpoint bilan bir xil response struktura qaytariladi.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Examples Section -->
+        <section id="examples" class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Kod Misollari</h2>
+
+            <!-- JavaScript Example -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">JavaScript (Fetch API)</h3>
+                <div class="code-block bg-gray-900 rounded-lg">
+                    <button class="copy-btn bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700" onclick="copyCode(this)">
+                        Copy
+                    </button>
+                    <pre><code class="language-javascript">// Sertifikat ID orqali ma'lumot olish
+const getCandidateByCertificateId = async (certificateId) => {
+  const response = await fetch(
+    `http://localhost:3000/api/company-integration/certificate/${certificateId}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  
+  const data = await response.json();
+  return data;
+};
+
+// Sertifikat raqami orqali ma'lumot olish
+const getCandidateByCertificateNumber = async (certificateNumber) => {
+  const response = await fetch(
+    `http://localhost:3000/api/company-integration/certificate-number/${certificateNumber}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  
+  const data = await response.json();
+  return data;
+};
+
+// Misol: HR tizimiga qo'shish
+const addCandidateToHRSystem = async (certificateId) => {
+  const candidateData = await getCandidateByCertificateId(certificateId);
+  
+  if (candidateData.success) {
+    const { candidate, vacancy, interview, testResults } = candidateData.data;
+    
+    const employee = {
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
+      phone: candidate.phone,
+      telegramId: candidate.telegramId,
+      position: vacancy.position,
+      department: vacancy.department,
+      interviewRating: interview.averageRating,
+      testScore: candidateData.data.averageTestScore,
+      certificateNumber: candidateData.data.certificate.certificateNumber,
+      issuedDate: candidateData.data.certificate.issuedDate
+    };
+    
+    // HR tizimiga yuborish
+    // await yourHRSystemAPI.createEmployee(employee);
+    
+    return employee;
+  }
+  
+  throw new Error('Failed to get candidate data');
+};</code></pre>
+                </div>
+            </div>
+
+            <!-- cURL Example -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">cURL</h3>
+                <div class="code-block bg-gray-900 rounded-lg">
+                    <button class="copy-btn bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700" onclick="copyCode(this)">
+                        Copy
+                    </button>
+                    <pre><code class="language-bash"># Sertifikat ID orqali
+curl -X GET "http://localhost:3000/api/company-integration/certificate/507f1f77bcf86cd799439071" \
+  -H "Content-Type: application/json"
+
+# Sertifikat raqami orqali
+curl -X GET "http://localhost:3000/api/company-integration/certificate-number/CERT-20240120-1" \
+  -H "Content-Type: application/json"</code></pre>
+                </div>
+            </div>
+
+            <!-- Python Example -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Python</h3>
+                <div class="code-block bg-gray-900 rounded-lg">
+                    <button class="copy-btn bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700" onclick="copyCode(this)">
+                        Copy
+                    </button>
+                    <pre><code class="language-python">import requests
+
+# Sertifikat ID orqali ma'lumot olish
+def get_candidate_by_certificate_id(certificate_id):
+    url = f"http://localhost:3000/api/company-integration/certificate/{certificate_id}"
+    response = requests.get(url)
+    return response.json()
+
+# Sertifikat raqami orqali ma'lumot olish
+def get_candidate_by_certificate_number(certificate_number):
+    url = f"http://localhost:3000/api/company-integration/certificate-number/{certificate_number}"
+    response = requests.get(url)
+    return response.json()
+
+# Misol: Foydalanish
+certificate_id = "507f1f77bcf86cd799439071"
+data = get_candidate_by_certificate_id(certificate_id)
+
+if data['success']:
+    candidate = data['data']['candidate']
+    print(f"Candidate: {candidate['fullName']}")
+    print(f"Phone: {candidate['phone']}")
+    print(f"Average Test Score: {data['data']['averageTestScore']}")
+    print(f"Interview Rating: {data['data']['interview']['averageRating']}")</code></pre>
+                </div>
+            </div>
+
+            <!-- PHP Example -->
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">PHP</h3>
+                <div class="code-block bg-gray-900 rounded-lg">
+                    <button class="copy-btn bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700" onclick="copyCode(this)">
+                        Copy
+                    </button>
+                    <pre><code class="language-php"><?php
+// Sertifikat ID orqali ma'lumot olish
+function getCandidateByCertificateId($certificateId) {
+    $url = "http://localhost:3000/api/company-integration/certificate/{$certificateId}";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json'
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true);
+}
+
+// Sertifikat raqami orqali ma'lumot olish
+function getCandidateByCertificateNumber($certificateNumber) {
+    $url = "http://localhost:3000/api/company-integration/certificate-number/{$certificateNumber}";
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json'
+    ]);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($response, true);
+}
+
+// Misol: Foydalanish
+$certificateId = "507f1f77bcf86cd799439071";
+$data = getCandidateByCertificateId($certificateId);
+
+if ($data['success']) {
+    $candidate = $data['data']['candidate'];
+    echo "Candidate: " . $candidate['fullName'] . "\n";
+    echo "Phone: " . $candidate['phone'] . "\n";
+    echo "Average Test Score: " . $data['data']['averageTestScore'] . "\n";
+}
+?></code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Structure Section -->
+        <section id="data-structure" class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Ma'lumotlar Strukturasi</h2>
+
+            <div class="bg-white rounded-lg shadow-md p-8 mb-6">
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Response Ma'lumotlari</h3>
+                
+                <div class="space-y-6">
+                    <!-- Certificate -->
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">certificate</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">id</code> - Sertifikat ID</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">certificateNumber</code> - Sertifikat raqami (CERT-YYYYMMDD-N)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">qrCode</code> - QR kod token</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">issuedDate</code> - Berilgan sana</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">status</code> - Status (active yoki revoked)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Candidate -->
+                    <div class="border-l-4 border-green-500 pl-4">
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">candidate</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">id</code> - Nomzod ID</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">firstName</code> - Ism</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">lastName</code> - Familiya</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">fullName</code> - To'liq ism</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">phone</code> - Telefon raqami</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">telegramId</code> - Telegram ID (ixtiyoriy)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">registrationType</code> - Ro'yxatdan o'tish turi (bot yoki web)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Vacancy -->
+                    <div class="border-l-4 border-purple-500 pl-4">
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">vacancy</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">title</code> - Vakansiya nomi</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">department</code> - Bo'lim</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">position</code> - Lavozim</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">experience</code> - Tajriba</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">workType</code> - Ish turi</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">skills</code> - Ko'nikmalar (array)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">company</code> - Kompaniya ma'lumotlari</li>
+                        </ul>
+                    </div>
+
+                    <!-- Interview -->
+                    <div class="border-l-4 border-yellow-500 pl-4">
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">interview</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">date</code> - Suhbat kuni</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">time</code> - Suhbat vaqti</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">interviewer</code> - Suhbat o'tkazuvchi</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">result</code> - Natija (passed, failed, pending)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">evaluations</code> - Baxolashlar (array)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">averageRating</code> - O'rtacha baxo</li>
+                        </ul>
+                    </div>
+
+                    <!-- Test Results -->
+                    <div class="border-l-4 border-red-500 pl-4">
+                        <h4 class="text-xl font-semibold mb-2 text-gray-800">testResults</h4>
+                        <p class="text-gray-700 mb-2">Har bir test natijasi quyidagi maydonlarga ega:</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">material</code> - Material ma'lumotlari</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">answers</code> - Javoblar (array)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">score</code> - Ball (0-100)</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">correctCount</code> - To'g'ri javoblar soni</li>
+                            <li><code class="bg-gray-200 px-2 py-1 rounded">totalQuestions</code> - Jami savollar soni</li>
+                        </ul>
+                        <p class="text-gray-700 mt-2"><code class="bg-gray-200 px-2 py-1 rounded">averageTestScore</code> - Barcha test natijalarining o'rtacha balli</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases Section -->
+        <section id="use-cases" class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Foydalanish Sohenlari</h2>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-blue-100 rounded-full p-3 mr-3">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">HR Tizim Integratsiyasi</h3>
+                    </div>
+                    <p class="text-gray-700">Kompaniyalar o'z HR tizimlariga integratsiya qilib, sertifikatga ega nomzodlarni avtomatik ravishda o'z xodimlari ro'yxatiga qo'shishlari mumkin.</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-green-100 rounded-full p-3 mr-3">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Xodim Tasdiqlash</h3>
+                    </div>
+                    <p class="text-gray-700">Kompaniyalar xodimning sertifikatini tekshirib, uning malakasini tasdiqlashlari mumkin.</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-purple-100 rounded-full p-3 mr-3">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Avtomatik Onboarding</h3>
+                    </div>
+                    <p class="text-gray-700">Sertifikatga ega nomzodlarni avtomatik ravishda onboarding jarayoniga qo'shish.</p>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-yellow-100 rounded-full p-3 mr-3">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Performance Tracking</h3>
+                    </div>
+                    <p class="text-gray-700">Nomzodning test natijalari va suhbat baxolashlarini tahlil qilish.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Important Notes -->
+        <section id="notes" class="mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">Muhim Eslatmalar</h2>
+
+            <div class="space-y-4">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                    <p class="font-semibold text-blue-800 mb-1">🔓 Public Access</p>
+                    <p class="text-blue-700">Bu API endpointlar authentication talab qilmaydi va ochiqdir. Har qanday kompaniya o'z tizimlariga integratsiya qilish uchun foydalanishi mumkin.</p>
+                </div>
+
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                    <p class="font-semibold text-green-800 mb-1">✅ Certificate Status</p>
+                    <p class="text-green-700">Faqat <code class="bg-white px-2 py-1 rounded">active</code> statusdagi sertifikatlar uchun ma'lumotlar qaytariladi. Agar sertifikat <code class="bg-white px-2 py-1 rounded">revoked</code> bo'lsa, 400 Bad Request xatosi qaytariladi.</p>
+                </div>
+
+                <div class="bg-purple-50 border-l-4 border-purple-500 p-4 rounded">
+                    <p class="font-semibold text-purple-800 mb-1">📊 Average Calculations</p>
+                    <p class="text-purple-700"><code class="bg-white px-2 py-1 rounded">averageRating</code> - Suhbat baxolashlarining o'rtacha qiymati</p>
+                    <p class="text-purple-700"><code class="bg-white px-2 py-1 rounded">averageTestScore</code> - Barcha test natijalarining o'rtacha balli</p>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded">
+                    <p class="font-semibold text-yellow-800 mb-1">🔢 Certificate Number Format</p>
+                    <p class="text-yellow-700">Sertifikat raqami <code class="bg-white px-2 py-1 rounded">CERT-YYYYMMDD-N</code> formatida bo'ladi, bu yerda:</p>
+                    <ul class="list-disc list-inside ml-4 mt-2 text-yellow-700">
+                        <li><code class="bg-white px-2 py-1 rounded">YYYYMMDD</code> - berilgan sana</li>
+                        <li><code class="bg-white px-2 py-1 rounded">N</code> - shu kundagi ketma-ket raqam</li>
+                    </ul>
+                </div>
+
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    <p class="font-semibold text-red-800 mb-1">🔒 Security Considerations</p>
+                    <ul class="list-disc list-inside ml-4 space-y-1 text-red-700">
+                        <li>Bu endpointlar public bo'lgani uchun, faqat sertifikat ID yoki raqami orqali ma'lumotlar olinadi.</li>
+                        <li>Kompaniyalar olingan ma'lumotlarni xavfsiz saqlashlari kerak.</li>
+                        <li>Production muhitida HTTPS protokoli ishlatilishi tavsiya etiladi.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white rounded-lg p-8 mt-12">
+            <div class="text-center">
+                <p class="text-lg mb-2">Kompaniya Integrasiya API</p>
+                <p class="text-gray-400">O'z tizimlaringizni bizning platforma bilan integratsiya qiling</p>
+                <p class="text-gray-500 text-sm mt-4">© 2024 HR Platform. Barcha huquqlar himoyalangan.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Copy code functionality
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const text = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('bg-green-600');
+                }, 2000);
+            });
+        }
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active navigation item on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (window.pageYOffset >= sectionTop - 100) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-blue-600');
+                link.classList.add('text-gray-700');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.remove('text-gray-700');
+                    link.classList.add('text-blue-600');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

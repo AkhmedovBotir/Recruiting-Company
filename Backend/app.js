@@ -20,14 +20,17 @@ const adminInterviewRoutes = require('./routes/adminInterviewRoutes');
 const webInterviewRoutes = require('./routes/webInterviewRoutes');
 const adminCertificateRoutes = require('./routes/adminCertificateRoutes');
 const certificateRoutes = require('./routes/certificateRoutes');
+const webCertificateRoutes = require('./routes/webCertificateRoutes');
+const companyIntegrationRoutes = require('./routes/companyIntegrationRoutes');
+const botRoutes = require('./routes/botRoutes');
 
 // Initialize express app
 const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '50mb' })); // Increase limit for base64 images
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '1gb' }));
+app.use(express.urlencoded({ extended: true, limit: '1gb' }));
 
 // Serve static files from public directory
 app.use(express.static('public'));
@@ -59,6 +62,9 @@ app.use('/api/admin/interviews', adminInterviewRoutes);
 app.use('/api/web/interviews', webInterviewRoutes);
 app.use('/api/admin/certificates', adminCertificateRoutes);
 app.use('/api/certificates', certificateRoutes);
+app.use('/api/web/certificates', webCertificateRoutes);
+app.use('/api/company-integration', companyIntegrationRoutes);
+app.use('/api/bot', botRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
