@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://localhost:3000/api';
+export const API_BASE_URL = 'https://api.milliycrm.uz/api';
 
 export const VACANCY_STATUS = {
   ACTIVE: 'active',
